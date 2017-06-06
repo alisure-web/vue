@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>数据绑定</title>
+    <script src="../../vue/vue.js"></script>
+</head>
+<body>
+
+<!--数据绑定语法-->
+<div id="bind">
+    <div>
+        <!--文本插值-->
+        <span>Hello {{name}}</span>
+    </div>
+    <div>
+        <!--HTML属性-->
+        <span v-bind:id="id">{{id}}</span>
+        <span :id="id">{{id}}</span>
+    </div>
+    <div>
+        <!--绑定表达式-->
+        <span>{{index + 1}}</span>
+        <span>{{index == 0 ? "a" : "b"}}</span>
+        <span>{{name.split("").join("|")}}</span>
+    </div>
+    <div>
+        <!--过滤器 Vue 2.0 去掉了内置的过滤器-->
+        <!--
+        <span>{{name | capitalize}}</span>
+        <span>{{name | uppercase}}</span>
+        -->
+    </div>
+</div>
+<script>
+    var vm = new Vue({
+        el: "#bind",
+        data: {
+            id: 1,
+            index: 0,
+            name: "vue",
+            avatar: "http://www.alisure.xyz",
+            count: [1, 2, 3, 4, 5],
+            names: ["Vue 1.0", "Vue 2.0"],
+            items: [
+                {name: "Vue 1.0", version: "1.0"},
+                {name: "Vue 2.0", version: "2.0"}
+            ]
+        }
+    });
+</script>
+
+<!--计算属性-->
+<div id="computed">
+    <p>{{first}}</p>
+    <p>{{last}}</p>
+    <p>{{price}}</p>
+    <p>{{myPrice}}</p>
+</div>
+<script>
+    var vm = new Vue({
+        el: "#computed",
+        data: {
+            first: "$",
+            last: 10000
+        },
+        computed: {
+            price: function () {
+                return this.first + this.last;
+            },
+            myPrice: {
+                set: function (first) {
+                    this.first = first;
+                },
+                get: function () {
+                    return this.first + this.last;
+                }
+            }
+        }
+    });
+    vm.myPrice = "￥";
+</script>
+
+<!--Class和Style绑定-->
+<style>
+    #style .div{
+        height: 40px;
+        background-color: antiquewhite;
+    }
+    #style .div.width{
+        width: 150px;
+    }
+    #style .div.active{
+        background-color: aquamarine;
+    }
+</style>
+<div id="style">
+    <div class="div" v-on:click="click"
+         v-bind:class="{active: isActive}"></div>
+    <div class="div" v-on:click="click"
+         v-bind:class="[{active: isActive}, 'width']"></div>
+</div>
+<script>
+    var vm = new Vue({
+        el: "#style",
+        data: {
+            isActive: false
+        },
+        methods: {
+            click: function () {
+                this.isActive = !this.isActive;
+            }
+        }
+    });
+</script>
+
+<!--表单控件-->
+<div id="form">
+    <div>
+        <!--Text-->
+        <input type="text" v-model="message" />
+        <span>your input is : {{message}}</span>
+    </div>
+    <div>
+        <!--Radio-->
+        <label><input type="radio" value="男" v-model="gender">男</label>
+        <label><input type="radio" value="女" v-model="gender">女</label>
+        <span>your input is : {{gender}}</span>
+    </div>
+    <div>
+        <!--Checkbox-->
+        <div>
+            <label><input type="checkbox" v-model="checked">哈哈</label>
+            <span>checked: {{checked}}</span>
+        </div>
+        <div>
+            <label><input type="checkbox" value="1" v-model="multiChecked">1</label>
+            <label><input type="checkbox" value="2" v-model="multiChecked">2</label>
+            <label><input type="checkbox" value="3" v-model="multiChecked">3</label>
+            <span>multiChecked: {{multiChecked.join("|")}}</span>
+        </div>
+    </div>
+    <div>
+        <!--Select-->
+        <div>
+            <select v-model="selected">
+                <option selected>A</option>
+                <option>B</option>
+                <option>C</option>
+            </select>
+            <span>Selected:{{selected}}</span>
+        </div>
+        <div>
+            <select v-model="multiSelected" multiple>
+                <option selected>A</option>
+                <option>B</option>
+                <option>C</option>
+            </select>
+            <span>multipleSelected:{{multiSelected.join("|")}}</span>
+        </div>
+    </div>
+</div>
+<script>
+    var vm = new Vue({
+        el: "#form",
+        data: {
+            message: "",
+            gender: "",
+            checked: "",
+            multiChecked: [],
+            selected: "",
+            multiSelected: [],
+            a: "checked",
+            b: "checked"
+        }
+    });
+</script>
+</body>
+</html>

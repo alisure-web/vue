@@ -5,5 +5,8 @@
     web/test/basic.html:
         基本特性介绍。
 
+    web/test/dataBind.html:
+        数据绑定：基本的数据绑定语法，计算属性，Class和Style绑定，表单控件
+
 
 

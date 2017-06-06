@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>渲染</title>
+    <script src="../../vue/vue.js"></script>
+</head>
+<body>
+
+<div id="condition">
+    <!--if 和 else必须紧挨着-->
+    <div v-if="yes">v-if="yes"</div>
+    <div v-else>v-else</div>
+    <!--可以嵌套使用-->
+    <div v-if="no">
+        <div v-if="yes">v-if="yes"</div>
+        <div v-else>v-else</div>
+    </div>
+    <div v-else>
+        <div v-if="yes">v-if="yes"</div>
+        <div v-else>v-else</div>
+    </div>
+
+    <!--v-show 渲染并保持在DOM树中-->
+    <div v-show="yes">v-show="yes"</div>
+
+    <!-- v-if 有更高的切换消耗，v-show 有更高的渲染消耗 -->
+</div>
+<script>
+    var vm = new Vue({
+        el: "#condition",
+        data: {
+            yes: true,
+            no: false
+        }
+    });
+</script>
+
+<div id="list">
+    <div>
+        <ul>
+            <!--遍历数组-->
+            <li v-for="item in items">
+                <h5>{{item.title}}</h5>
+                <p>{{item.description}}</p>
+            </li>
+        </ul>
+        <ul>
+            <!--遍历数组-->
+            <li v-for="(item, index) in items" v-bind:data-id="index">
+                <h4>{{index}}</h4>
+                <h5>{{item.title}}</h5>
+                <p>{{item.description}}</p>
+            </li>
+        </ul>
+        <ul>
+            <!--遍历对象-->
+            <li v-for="(value, key) in object">
+                <h5>{{key}} - {{value}}</h5>
+            </li>
+        </ul>
+        <ul>
+            <!--单纯的循环-->
+            <li v-for="n in 5">
+                <h5>{{n}}</h5>
+            </li>
+        </ul>
+    </div>
+</div>
+<script>
+    var vm = new Vue({
+        el: "#list",
+        data: {
+            items: [
+                {title: "111", description: "111111"},
+                {title: "222", description: "222222"},
+                {title: "333", description: "333333"}
+            ],
+            object: {
+                a : "aaa",
+                b : "bbb",
+                c : "ccc"
+            }
+        }
+    });
+</script>
+
+<div id="template">
+    <div>
+        <ul>
+            <template v-for="item in items">
+                <li>
+                    <h5>{{item.title}}</h5>
+                    <p>{{item.description}}</p>
+                </li>
+                <li>
+                    <h5>{{item.title}}</h5>
+                    <p>{{item.description}}</p>
+                </li>
+            </template>
+        </ul>
+    </div>
+</div>
+<script>
+    var vm = new Vue({
+        el: "#template",
+        data: {
+            items: [
+                {title: "111", description: "111111"},
+                {title: "222", description: "222222"},
+                {title: "333", description: "333333"}
+            ]
+        }
+    });
+</script>
+
+</body>
+</html>

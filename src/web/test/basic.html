@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Test</title>
+    <script src="../../vue/vue.js"></script>
+</head>
+<body>
+
+<!--最简单的用法：数据绑定-->
+<div id="binding">
+    <h1>you input is {{message}}</h1>
+    <input type="text" v-model="message">
+</div>
+<script>
+    var vm = new Vue({
+        el: "#binding",
+        data:{
+            message: "hello alisure!"
+        }
+    });
+</script>
+
+<!--最简单的用法：组件化-->
+<div id="component">
+    <message content="hello alisure"></message>
+</div>
+<script>
+    var Message = Vue.extend({
+        props: ["content"],
+        template: "<h1>{{content}}</h1>"
+    });
+    Vue.component("message", Message);
+    var vm2 = new Vue({
+        el: "#component"
+    });
+</script>
+
+<!--基础特性：模板-->
+<div id="template">
+    <p>alisure</p>
+</div>
+<script id="template-content" type="x-template">
+    <div class="template">
+        <p>this is the text that from template.</p>
+    </div>
+</script>
+<script>
+    var vm3 = new Vue({
+        /*为实例提供挂载元素*/
+        el: "#template",
+        /*替换挂载元素，合并挂载元素和模板根节点的属性*/
+        template: "#template-content"
+    });
+</script>
+
+<!--基础特性：响应式数据-->
+<div id="data">
+    <h1>the data is {{data}}</h1>
+</div>
+<script>
+    var vm4 = new Vue({
+        el: "#data",
+        data:{
+            data: "hello!"
+        }
+    });
+</script>
+
+<!--基础特性：通过props获取数据-->
+<div id="my-component">
+    <my-component title="my title" content="my content"></my-component>
+</div>
+<script>
+    var myComponent = Vue.component("my-component", {
+        props: ["title", "content"],
+        data: function () {
+            return {
+                desc: "123"
+            }
+        },
+        template: "<div>\
+                        <h1>{{title}}</h1>\
+                        <p>{{content}}</p>\
+                        <p>{{desc}}</p>\
+                    </div>"
+    });
+    var vm5 = new Vue({
+        el: "#my-component"
+    });
+</script>
+
+<!--基础特性：方法-->
+<div id="methods">
+    <button v-on:click="alert">alert</button>
+</div>
+<script>
+    var vm6 = new Vue({
+        el: "#methods",
+        data: {
+            a: 1
+        },
+        /*方法*/
+        methods:{
+            alert: function () {
+                alert(this.a);
+            }
+        }
+    });
+</script>
+
+<!--基础特性：生命周期-->
+<div id="lifecycle" v-on:click="destroy">
+    <h1>{{message}}</h1>
+</div>
+<script>
+    var vm7 = new Vue({
+        el: "#lifecycle",
+        data: {
+            message: "lifecycle"
+        },
+        /*生命周期钩子*/
+        /**
+         * 在实例初始化之后，数据观测(data observer)
+         * 和 event/watcher 事件配置之前被调用。
+         * */
+        beforeCreate: function () {
+            console.log("beforeCreate");
+        },
+        /**
+         * 实例已经创建完成之后被调用。
+         * 在这一步，实例已完成以下的配置：
+         *      数据观测(data observer)，
+         *      属性和方法的运算，
+         *      watch/event 事件回调。
+         * 然而，挂载阶段还没开始，$el 属性目前不可见。
+         * */
+        created: function () {
+            console.log("created");
+        },
+        /**
+         * 在挂载开始之前被调用：相关的 render 函数首次被调用。
+         * */
+        beforeMount: function () {
+            console.log("beforeMount");
+        },
+        /**
+         * el 被新创建的 vm.$el 替换，并挂载到实例上去之后调用该钩子。
+         * 如果 root 实例挂载了一个文档内元素，
+         * 当 mounted 被调用时 vm.$el 也在文档内。
+         * */
+        mounted: function () {
+            console.log("mounted");
+        },
+        /**
+         * 数据更新时调用，发生在虚拟 DOM 重新渲染和打补丁之前。
+         * */
+        beforeUpdate: function () {
+            console.log("beforeUpdate");
+        },
+        /**
+         * 由于数据更改导致的虚拟 DOM 重新渲染和打补丁，在这之后会调用该钩子。
+         *
+         * 当这个钩子被调用时，组件 DOM 已经更新，
+         * 所以你现在可以执行依赖于 DOM 的操作。
+         * */
+        updated: function () {
+            console.log("updated");
+        },
+        /**
+         * 在这一步，实例仍然完全可用。
+         * */
+        beforeDestroy: function () {
+            console.log("beforeDestroy");
+        },
+        /**
+         * 调用后，Vue 实例指示的
+         * 所有东西都会解绑定，
+         * 所有的事件监听器会被移除，
+         * 所有的子实例也会被销毁
+         * */
+        destroyed: function () {
+            console.log("destroyed");
+        },
+        /**
+         * keep-alive 组件激活时调用。
+         * */
+        activated: function () {
+            console.log("activated");
+        },
+        /**
+         * keep-alive 组件停用时调用。
+         * */
+        deactivated: function () {
+            console.log("deactivated");
+        },
+        methods: {
+            destroy: function () {
+                /*销毁*/
+                this.$destroy();
+            }
+        }
+    });
+
+    /*更新*/
+    vm7.$data.message = "updated";
+
+</script>
+
+</body>
+</html>

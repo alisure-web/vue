@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml"
+      xmlns:v-el="http://www.w3.org/1999/xhtml" xmlns:v-demo="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>指令</title>
+    <script src="../../vue/vue.js"></script>
+</head>
+<body>
+
+<!-- 指令（Directives）是带有 v- 前缀的特殊属性。 -->
+<!-- 指令的职责：当其表达式的值改变时相应地将某些行为应用到 DOM 上。 -->
+<style>
+    [v-cloak] {
+        display: none;
+    }
+</style>
+<div id="directive">
+    <div>
+        <!-- v-bind 指令被用来响应地更新 HTML 属性 -->
+        <a v-bind:href="url">v-bind:href</a>
+
+        <!-- v-on 指令 用于监听 DOM 事件 -->
+        <!-- 修饰符（Modifiers）是以半角句号 . 指明的特殊后缀，用于指出一个指令应该以特殊方式绑定。 -->
+        <!-- .prevent 修饰符告诉 v-on 指令对于触发的事件调用 event.preventDefault() -->
+        <a v-on:click.prevent="click_a">v-on:click</a>
+
+        <!-- v-model -->
+        <!-- 表单控件的指令 -->
+
+        <!-- v-if v-else-if v-else v-show -->
+        <p v-if="show">Now you see me</p>
+        <!-- v-for -->
+
+        <!-- v-text -->
+        <!-- v-text 绑定在某个元素上，能避免未编译前的闪现问题。 -->
+        <span v-text="url"></span>
+        <span>{{url}}</span>
+
+        <!-- v-html -->
+        <div v-html="html"></div>
+        <div>{{html}}</div>
+
+        <!-- v-pre -->
+        <!-- 跳过这个元素和它的子元素的编译过程。
+             可以用来显示原始 Mustache 标签。
+             跳过大量没有指令的节点会加快编译。 -->
+        <span v-pre>{{ this will not be compiled }}</span>
+
+        <!-- v-cloak 遮掩 -->
+        <!-- 这个指令保持在元素上直到关联实例结束编译。
+             和 CSS 规则如 [v-cloak] { display: none } 一起用时，
+             这个指令可以隐藏未编译的 Mustache 标签直到实例准备完毕。 -->
+        <div v-cloak>{{url}}</div>
+
+        <!-- v-once -->
+        <!-- 只渲染元素和组件一次。
+             随后的重新渲染,元素/组件及其所有的子节点将被视为静态内容并跳过。
+             这可以用于优化更新性能。 -->
+        <span v-once>this will never change: {{url}}</span>
+
+    </div>
+</div>
+<script>
+    var vm = new Vue({
+        el: "#directive",
+        data: {
+            show: true,
+            hide: false,
+            url: "http://www.alisure.xyz",
+            html: "<span>span</span>"
+        },
+        methods:{
+            click_a : function () {
+                alert(this.url);
+            }
+        }
+    });
+</script>
+
+<!-- 自定义指令 -->
+<div id="myDirective">
+    <!-- 自定义 v-focus 指令 -->
+    <input v-focus>
+
+    <!-- 钩子函数 -->
+    <!--
+        bind: 只调用一次，指令第一次绑定到元素时调用，用这个钩子函数可以定义一个在绑定时执行一次的初始化动作。
+        inserted: 被绑定元素插入父节点时调用（父节点存在即可调用，不必存在于 document 中）。
+        update: 被绑定元素所在的模板更新时调用，而不论绑定值是否变化。
+                通过比较更新前后的绑定值，可以忽略不必要的模板更新（详细的钩子函数参数见下）。
+        componentUpdated: 被绑定元素所在模板完成一次更新周期时调用。
+        unbind: 只调用一次， 指令与元素解绑时调用。
+    -->
+
+    <!-- 钩子函数参数 -->
+    <div v-demo:hello.a.b="message">aaa</div>
+
+    <!-- 对象字面量 和 函数简写 -->
+    <div v-demo2="{ color: 'white', text: 'hello!' }"></div>
+
+</div>
+<script>
+
+    /* 全局指令 */
+    Vue.directive("focus", {
+        inserted: function (el) {
+            el.focus();
+        }
+    });
+
+    /* 钩子函数参数 */
+    Vue.directive("demo", {
+        inserted: function (el, binding, vnode) {
+            var s = JSON.stringify;
+            el.innerHTML =
+                'name: '       + s(binding.name) + '<br>' +
+                'value: '      + s(binding.value) + '<br>' +
+                'oldValue: '      + s(binding.oldValue) + '<br>' +
+                'expression: ' + s(binding.expression) + '<br>' +
+                'argument: '   + s(binding.arg) + '<br>' +
+                'modifiers: '  + s(binding.modifiers) + '<br>' +
+                'vnode keys: ' + Object.keys(vnode).join(', ');
+        }
+    });
+
+    /* 对象字面量 和 函数简写 */
+    Vue.directive("demo2", function (el, binding) {
+        el.innerHTML = binding.value.color + '<br>' + binding.value.text;
+    });
+
+    var vm = new Vue({
+        el: "#myDirective",
+        data: {
+            message: "hello"
+        }
+    });
+</script>
+
+</body>
+</html>

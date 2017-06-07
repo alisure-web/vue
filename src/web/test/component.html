@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>组件</title>
+    <script src="../../vue/vue.js"></script>
+</head>
+<body>
+
+<!-- 组件：最简单的例子 -->
+<div id="component-1">
+    <!-- 最简单的例子 -->
+    <my-component></my-component>
+</div>
+<script>
+    /* 注册组件 */
+    Vue.component("my-component", {
+        template: '<div>A custom component!</div>'
+    });
+
+    /* 创建根实例 */
+    var vm = new Vue({
+        el: "#component-1"
+    });
+</script>
+
+<!-- Prop -->
+<div id="prop">
+    <child message="hello"></child>
+</div>
+<script>
+    Vue.component("child",{
+        props: ["message"],
+        template: "<span>{{message}}</span>"
+    });
+    var vm = new Vue({
+        el: "#prop"
+    });
+</script>
+
+<!-- 动态prop -->
+<div id="prop2">
+    <input v-model="message">
+    <br />
+    <child2 v-bind:my-message="message"></child2>
+</div>
+<script>
+    Vue.component("child2",{
+        props: ["myMessage"],
+        template: "<span>{{myMessage}}</span>"
+    });
+    var vm = new Vue({
+        el: "#prop2",
+        data: {
+            message: ""
+        }
+    });
+</script>
+
+<!-- prop验证 -->
+<div id="validation">
+    <validation :prop-a="1" :prop-b="2" :prop-c="propText" :prop-e="3"></validation>
+    <validation :prop-a="4" prop-b="cccc" :prop-c="propText" :prop-d="5" :prop-e="6"></validation>
+    <validation :prop-a="7" :prop-b="8" prop-c="propText" :prop-e="9"></validation>
+</div>
+<script>
+    Vue.component("validation", {
+        props: {
+            /* 基础类型检测 （`null` 意思是任何类型都可以）*/
+            propA: Number,
+            /* 多种类型 */
+            propB: [String, Number],
+            /* 必传且是字符串 */
+            propC: {
+                type: String,
+                required: true
+            },
+            /* 数字，有默认值 */
+            propD: {
+                type: Number,
+                default: 100
+            },
+            /* 自定义验证函数 */
+            propE: {
+                validator: function (value) {
+                    return value >= 0
+                }
+            }
+        },
+        template: "<div><span>{{propA}}</span><br /> \
+                    <span>{{propB}}</span><br /> \
+                    <span>{{propC}}</span><br /> \
+                    <span>{{propD}}</span><br /> \
+                    <span>{{propE}}</span></div>"
+    });
+    var vm = new Vue({
+        el: "#validation",
+        data: {
+            propText: "tttexttt"
+        }
+    });
+
+</script>
+
+
+
+<!-- 自定义事件：用于父子组件通信 -->
+<!--
+     每个 Vue 实例都实现了事件接口(Events interface)，即：
+     使用 $on(eventName) 监听事件
+     使用 $emit(eventName) 触发事件
+
+     父组件可以在使用子组件的地方直接用 v-on 来监听子组件触发的事件。
+     不能用$on侦听子组件抛出的事件，而必须在模板里直接用v-on绑定。
+ -->
+<div id="event-counter">
+    <p>{{total}}</p>
+    <!-- 绑定自定义事件，即监听自定义事件 -->
+    <button-counter v-on:increment="incrementTotal"></button-counter>
+    <button-counter v-on:increment="incrementTotal"></button-counter>
+</div>
+<script>
+    Vue.component("button-counter", {
+        template: '<button v-on:click="incrementCounter">{{counter}}</button>',
+        /* 每个组件的数据需要独立 */
+        data: function () {
+            return {
+                counter: 0
+            }
+        },
+        methods: {
+            incrementCounter: function () {
+                this.counter += 1;
+                /* 触发事件 */
+                /* 在本例中，子组件已经和它外部完全解耦了。
+                   它所做的只是报告自己的内部事件，至于父组件是否关心则与它无关。 */
+                this.$emit("increment");
+            }
+        }
+    });
+
+    var vm = new Vue({
+        el: "#event-counter",
+        data: {
+            total: 0
+        },
+        methods: {
+            incrementTotal: function () {
+                this.total += 1;
+            }
+        }
+    });
+</script>
+
+<!-- 非父子组件：使用状态管理模式 -->
+
+
+
+<!-- slot 分发内容 -->
+<!-- 单个slot -->
+<div id="single-slot">
+    <div>
+        <h1>我是父组件的标题</h1>
+        <my-component>
+            <p>这是一些初始内容</p>
+            <p>这是更多的初始内容</p>
+        </my-component>
+    </div>
+    <div>
+        <h1>我是父组件的标题</h1>
+        <my-component></my-component>
+    </div>
+</div>
+<script>
+    Vue.component("my-component", {
+        template: "<div>\
+                        <h2>我是子组件的标题</h2>\
+                        <slot>只有在没有要分发的内容时才会显示。</slot>\
+                    </div>"
+    });
+
+    var vm = new Vue({
+        el: "#single-slot"
+    });
+</script>
+
+<!-- 具名slot -->
+<div id="name-slot">
+    <app-layout>
+        <h1 slot="header">这里可能是一个页面标题</h1>
+        <p>主要内容的一个段落。</p>
+        <p>另一个主要段落。</p>
+        <p slot="footer">这里有一些联系信息</p>
+    </app-layout>
+</div>
+<script>
+    Vue.component("app-layout", {
+        template: '<div class="container">\
+                        <header><slot name="header"></slot></header>\
+                        <main><slot></slot></main>\
+                        <footer><slot name="footer"></slot></footer>\
+                    </div>'
+    });
+
+    var vm = new Vue({
+        el: "#name-slot"
+    });
+</script>
+
+<!-- 作用域slot -->
+<!-- 将数据传递到插槽，就像将 prop 传递给组件一样 -->
+<div id="scope-slot">
+    <div class="parent">
+        <scope-child>
+            <template scope="props">
+                <span>hello from parent</span><br/>
+                <span>{{props.text}}</span>
+            </template>
+        </scope-child>
+    </div>
+</div>
+<script>
+    Vue.component("scope-child", {
+        template: '<div class="child">\
+                        <slot text="hello from child"></slot>\
+                    </div>'
+    });
+    var vm = new Vue({
+        el: "#scope-slot"
+    });
+</script>
+
+
+
+<!-- 动态组件 -->
+<div id="is">
+    <ul>
+        <li @click="currentView = 'home'">Home</li>
+        <li @click="currentView = 'list'">List</li>
+        <li @click="currentView = 'detail'">Detail</li>
+    </ul>
+    <!-- 非活动组件将被缓存 -->
+    <keep-alive>
+        <component :is="currentView"></component>
+    </keep-alive>
+</div>
+<script>
+    var vm = new Vue({
+        el: "#is",
+        data: {
+            currentView: "home"
+        },
+        components: {
+            home: {
+                template: '<div>home</div>'
+            },
+            list: {
+                template: '<div>list</div>'
+            },
+            detail: {
+                template: '<div>detail</div>'
+            }
+        }
+    });
+</script>
+
+
+
+<!-- 编写可复用的组件 -->
+<!--
+    Vue 组件的 API 来自三部分 - props, events 和 slots ：
+        Props 允许外部环境传递数据给组件
+        Events 允许组件触发外部环境的副作用
+        Slots 允许外部环境将额外的内容组合在组件中。
+-->
+
+
+<!-- 内联模版 -->
+<!-- 如果子组件有 inline-template 特性，
+    组件将把它的内容当作它的模板，而不是把它当作分发内容。 -->
+<div id="inline-template">
+    <inline-template-component inline-template>
+        <div>
+            <p>These are compiled as the component's own template.</p>
+            <p>Not parent's transclusion content.</p>
+        </div>
+    </inline-template-component>
+</div>
+<script>
+    Vue.component('inline-template-component', {
+        template: '<p>inline-template</p>'
+    });
+    var vm = new Vue({
+        el: "#inline-template"
+    });
+</script>
+
+<!-- X-Templates -->
+<!-- 另一种定义模版的方式是在 JavaScript 标签里使用 text/x-template 类型，并且指定一个id。 -->
+<div id="x-template">
+    <x-template></x-template>
+</div>
+<script type="text/x-template" id="hello-world-template">
+    <p>Hello hello hello</p>
+</script>
+<script>
+    Vue.component('x-template', {
+        template: '#hello-world-template'
+    });
+    var vm = new Vue({
+        el: "#x-template"
+    });
+</script>
+
+</body>
+</html>

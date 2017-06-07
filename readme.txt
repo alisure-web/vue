@@ -14,3 +14,11 @@
     web/test/event.html:
         事件处理器：事件、事件修饰符、按键修饰符
 
+    web/test/directive.html:
+        指令
+
+    web/test/filter.html:
+        过滤器
+
+    web/test/component.html:
+        组件

@@ -1,4 +1,10 @@
 学习vue.js
+
+注意事项：
+    1.IDEA安装Vue插件
+    2.
+
+
 2017-06-06
     开始学习
 
@@ -22,3 +28,10 @@
 
     web/test/component.html:
         组件
+
+    web/test/transition.html:
+        过渡效果
+
+2017-06-08
+    单文件组件
+

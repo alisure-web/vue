@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>过渡效果</title>
+    <link rel="stylesheet" href="../../animate/animate.css">
+    <script src="../../vue/vue.js"></script>
+</head>
+<body>
+
+<!-- 基本例子 -->
+<!--
+    当插入或删除包含在 transition 组件中的元素时，Vue 将会做以下处理：
+       1.自动嗅探目标元素是否应用了 CSS 过渡或动画，
+            如果是，在恰当的时机添加/删除 CSS 类名。
+       2.如果过渡组件提供了JavaScript 钩子函数，
+            这些钩子函数将在恰当的时机被调用。
+       3.如果没有找到 JavaScript 钩子并且也没有检测到 CSS 过渡/动画，
+            DOM 操作（插入/删除）在下一帧中立即执行。
+-->
+<!--
+    会有 4 个(CSS)类名在 enter/leave 的过渡中切换:
+        1.v-enter: 定义进入过渡的开始状态。
+            在元素被插入时生效，在下一个帧移除。
+        2.v-enter-active: 定义进入过渡的结束状态。
+            在元素被插入时生效，在 transition/animation 完成之后移除。
+        3.v-leave: 定义离开过渡的开始状态。
+            在离开过渡被触发时生效，在下一个帧移除。
+        4.v-leave-active: 定义离开过渡的结束状态。
+            在离开过渡被触发时生效，在 transition/animation 完成之后移除。
+-->
+<style>
+    .fade-enter-active,
+    .fade-leave-active{
+        transition: opacity 0.5s;
+    }
+    .fade-enter,
+    .fade-leave-active{
+        opacity: 0;
+    }
+</style>
+<div id="transition-1" style="width: 100%; overflow: hidden">
+    <button @click="show = !show">Toggle</button>
+    <transition name="fade">
+        <p v-if="show">Hello</p>
+    </transition>
+</div>
+<script>
+    var vm = new Vue({
+        el: "#transition-1",
+        data: {
+            show: true
+        }
+    });
+</script>
+
+
+<!-- CSS过渡 -->
+<style>
+    .slide-fade-enter-active{
+        transition: all 0.3s cubic-bezier(0.68, -0.55, 0.32, 1.55);
+    }
+    .slide-fade-leave-active{
+        transition: all 0.8s cubic-bezier(0.68, -0.55, 0.32, 1.55);
+    }
+    .slide-fade-enter, .slide-fade-leave-active{
+        transform: translateX(10px);
+        opacity: 0;
+    }
+</style>
+<div id="transition-2" style="width: 100%; overflow: hidden">
+    <button @click="show = !show">Toggle</button>
+    <transition name="slide-fade">
+        <p v-if="show">hello</p>
+    </transition>
+</div>
+<script>
+    var vm = new Vue({
+        el: "#transition-2",
+        data: {
+            show: true
+        }
+    });
+</script>
+
+
+<!-- CSS动画 -->
+<!--
+    CSS 动画用法同 CSS 过渡，
+    区别是在动画中 v-enter 类名在节点插入 DOM 后不会立即删除，
+    而是在 animationend 事件触发时删除。
+-->
+<style>
+    .bounce-enter-active{
+        animation: bounce-in 0.5s;
+    }
+    .bounce-leave-active{
+        animation: bounce-out 0.5s;
+    }
+    @keyframes bounce-in {
+        0% {
+            transform: scale(0);
+        }
+        50% {
+            transform: scale(1.5);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+    @keyframes bounce-out {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.5);
+        }
+        100% {
+            transform: scale(0);
+        }
+    }
+</style>
+<div id="transition-3" style="width: 100%; overflow: hidden">
+    <button @click="show = !show">Toggle</button>
+    <transition name="bounce">
+        <p v-if="show">look at me</p>
+    </transition>
+</div>
+<script>
+    var vm = new Vue({
+        el: "#transition-3",
+        data: {
+            show: true
+        }
+    });
+</script>
+
+
+<!-- 自定义过渡类名 -->
+<!--
+    通过以下特性来自定义过渡类名：
+        enter-class
+        enter-active-class
+        leave-class
+        leave-active-class
+-->
+<div id="transition-4" style="width: 100%; overflow: hidden">
+    <button @click="show = !show">Toggle</button>
+    <transition
+        name="custom-classes-transition"
+        enter-active-class="animated bounceInRight"
+        leave-active-class="animated bounceOutRight"
+    >
+        <p v-if="show">hello</p>
+    </transition>
+</div>
+<script>
+    var vm = new Vue({
+        el: "#transition-4",
+        data: {
+            show: true
+        }
+    });
+</script>
+
+<!-- 初始渲染的过渡 -->
+<div id="transition-5" style="width: 100%; overflow: hidden">
+    <button @click="show = !show">Toggle</button>
+    <transition appear
+            appear-class="animated bounceInRight"
+            appear-active-class="animated bounceInRight"
+    >
+        <p v-if="show">hello</p>
+    </transition>
+</div>
+<script>
+    var vm = new Vue({
+        el: "#transition-5",
+        data: {
+            show: true
+        }
+    });
+</script>
+
+
+<!-- JavaScript 钩子 -->
+<style>
+    .fade-enter-active,
+    .fade-leave-active{
+        transition: opacity 0.5s;
+    }
+    .fade-enter,
+    .fade-leave-active{
+        opacity: 0;
+    }
+</style>
+<div id="transition-6" style="width: 100%; overflow: hidden">
+    <button @click="show = !show">Toggle</button>
+    <transition name="fade"
+                @before-appear="beforeAppear"
+                @appear="appear"
+                @after-appear="afterAppear"
+                @before-enter="beforeEnter"
+                @enter="enter"
+                @after-enter="afterEnter"
+                @enter-cancelled="enterCancelled"
+                @before-leave="beforeLeave"
+                @leave="leave"
+                @after-leave="afterLeave"
+                @leave-cancelled="leaveCancelled"
+    >
+        <p v-if="show">Hello</p>
+    </transition>
+</div>
+<script>
+    var vm = new Vue({
+        el: "#transition-6",
+        data: {
+            show: true
+        },
+        methods: {
+            /* 初始渲染 */
+            beforeAppear: function (el) {
+                console.log("beforeAppear", el.className);
+            },
+            appear: function (el) {
+                console.log("appear", el.className);
+            },
+            afterAppear: function (el) {
+                console.log("afterAppear", el.className);
+            },
+
+            /* 进入 */
+            beforeEnter: function (el) {
+                console.log("beforeEnter", el.className);
+            },
+            enter: function (el, done) {
+                console.log("enter", el.className);
+            },
+            afterEnter: function (el) {
+                console.log("afterEnter", el.className);
+            },
+            enterCancelled: function (el) {
+                console.log("enterCancelled", el.className);
+            },
+
+            /* 离开 */
+            beforeLeave: function (el) {
+                console.log("beforeLeave", el.className);
+            },
+            leave: function (el, done) {
+                console.log("leave", el.className);
+            },
+            afterLeave: function (el) {
+                console.log("afterLeave", el.className);
+            },
+            leaveCancelled: function (el) {
+                console.log("leaveCancelled", el.className);
+            }
+        }
+    });
+</script>
+
+
+<!-- 多个元素的过渡 -->
+<!--
+    当有相同标签名的元素切换时，
+    需要通过 key 特性设置唯一的值来标记以让 Vue 区分它们，
+    否则 Vue 为了效率只会替换相同标签内部的内容。
+-->
+<!-- 可以发现有一个问题，原因是 <transition> 的默认行为 - 进入和离开同时发生 -->
+<div id="transition-7" style="width: 100%; overflow: hidden">
+    <button @click="show = !show">Toggle</button>
+    <transition
+            enter-active-class="animated bounceInRight"
+            leave-active-class="animated bounceOutRight">
+        <p v-if="show" key="f">show is {{show}}</p>
+        <p v-else key="s">{{show}} is show</p>
+    </transition>
+</div>
+<script>
+    var vm = new Vue({
+        el: "#transition-7",
+        data: {
+            show: true
+        }
+    });
+</script>
+
+
+<!-- 过渡模式 -->
+<!-- 同时生效的进入和离开的过渡不能满足所有要求，所以 Vue 提供了 过渡模式 -->
+<!--
+    in-out: 新元素先进行过渡，完成之后当前元素过渡离开。
+    out-in: 当前元素先进行过渡，完成之后新元素过渡进入。
+-->
+<div id="transition-8" style="width: 100%; overflow: hidden">
+    <button @click="show = !show">Toggle</button>
+    <transition mode="out-in"
+            enter-active-class="animated bounceInRight"
+            leave-active-class="animated bounceOutRight">
+        <p v-if="show" key="f">show is {{show}}</p>
+        <p v-else key="s">{{show}} is show</p>
+    </transition>
+</div>
+<script>
+    var vm = new Vue({
+        el: "#transition-8",
+        data: {
+            show: true
+        }
+    });
+</script>
+
+
+<!-- 多个组件的过渡 -->
+<div id="transition-9" style="width: 100%; overflow: hidden">
+    <button @click="click">Toggle</button>
+    <transition  mode="out-in"
+                 enter-active-class="animated bounceInRight"
+                 leave-active-class="animated bounceOutRight">
+        <component :is="view"></component>
+    </transition>
+</div>
+<script>
+    var vm = new Vue({
+        el: "#transition-9",
+        data: {
+            view: "v-a"
+        },
+        methods: {
+            click: function () {
+                this.view = this.view == "v-a" ? "v-b" : "v-a";
+            }
+        },
+        components: {
+            "v-a": {
+                template: "<div>this is a</div>"
+            },
+            "v-b": {
+                template: "<div>this is b</div>"
+            }
+        }
+    });
+</script>
+
+
+<!-- 列表的进入和离开过渡 -->
+<style>
+    .list-item {
+        display: inline-block;
+        margin-right: 10px;
+    }
+    .list-enter-active, .list-leave-active {
+        transition: all 1s;
+    }
+    .list-enter, .list-leave-active {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+</style>
+<div id="list-1" class="demo">
+    <button @click="add">Add</button>
+    <button @click="remove">Remove</button>
+
+    <transition-group name="list" tag="div">
+        <span v-for="item in items" :key="item" class="list-item">{{ item }}</span>
+    </transition-group>
+</div>
+<script>
+    var vm = new Vue({
+        el: "#list-1",
+        data: {
+            items: [1,2,3,4,5,6,7,8,9],
+            nextNum: 10
+        },
+        methods: {
+            randomIndex: function () {
+                return Math.floor(Math.random() * this.items.length)
+            },
+            add: function () {
+                this.items.splice(this.randomIndex(), 0, this.nextNum++)
+            },
+            remove: function () {
+                this.items.splice(this.randomIndex(), 1)
+            }
+        }
+    });
+</script>
+
+
+<!-- 列表的位移过渡-->
+<!--
+    <transition-group> 组件还有一个特殊之处：
+        不仅可以进入和离开动画，还可以改变定位。
+        要使用这个新功能只需了解新增的 v-move 特性，它会在元素的改变定位的过程中应用。
+-->
+<style>
+    .list2-item {
+        display: inline-block;
+        margin-right: 10px;
+    }
+    .list2-enter-active, .list2-leave-active {
+        transition: all 1s;
+    }
+    .list2-enter, .list2-leave-active {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    /* v-move 特性 */
+    .list2-move {
+         transition: all 1s;
+     }
+</style>
+<div id="list-2" class="demo">
+    <button @click="add">Add</button>
+    <button @click="remove">Remove</button>
+
+    <transition-group name="list2" tag="div">
+        <span v-for="item in items" :key="item" class="list2-item">{{ item }}</span>
+    </transition-group>
+</div>
+<script>
+    var vm = new Vue({
+        el: "#list-2",
+        data: {
+            items: [1,2,3,4,5,6,7,8,9],
+            nextNum: 10
+        },
+        methods: {
+            randomIndex: function () {
+                return Math.floor(Math.random() * this.items.length)
+            },
+            add: function () {
+                this.items.splice(this.randomIndex(), 0, this.nextNum++)
+            },
+            remove: function () {
+                this.items.splice(this.randomIndex(), 1)
+            }
+        }
+    });
+</script>
+
+
+<!-- 列表过渡例子 -->
+<style>
+    .list3-item {
+        transition: all 1s;
+        display: inline-block;
+        margin-right: 10px;
+    }
+    .list3-enter, .list3-leave-active {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    .list3-leave-active {
+        position: absolute;
+    }
+</style>
+<div id="list-3" class="demo">
+    <button @click="add">Add</button>
+    <button @click="remove">Remove</button>
+
+    <transition-group name="list3" tag="div">
+        <span v-for="item in items" :key="item" class="list3-item">{{ item }}</span>
+    </transition-group>
+</div>
+<script>
+    var vm = new Vue({
+        el: "#list-3",
+        data: {
+            items: [1,2,3,4,5,6,7,8,9],
+            nextNum: 10
+        },
+        methods: {
+            randomIndex: function () {
+                return Math.floor(Math.random() * this.items.length)
+            },
+            add: function () {
+                this.items.splice(this.randomIndex(), 0, this.nextNum++)
+            },
+            remove: function () {
+                this.items.splice(this.randomIndex(), 1)
+            }
+        }
+    });
+</script>
+
+
+<!-- 列表的渐进过渡 -->
+<div id="list-4">
+
+</div>
+
+<!-- 可复用的过渡 -->
+
+
+<!-- 动态过渡 -->
+
+
+<!-- 过渡状态 -->
+
+
+</body>
+</html>

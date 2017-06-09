@@ -2,7 +2,12 @@
 
 注意事项：
     1.IDEA安装Vue插件
-    2.
+    2.安装 vue-cli:(https://vue-loader.vuejs.org/zh-cn)
+        npm install -g vue-cli
+        vue init webpack-simple hello-vue
+        cd hello-vue
+        npm install
+        npm run dev
 
 脚手架说明：
     1.安装webpack：
@@ -45,4 +50,9 @@
 
 2017-06-08
     单文件组件
+        编写 Vue.js 应用程序时，组合使用 Webpack 和 vue-loader 能带来一个现代，
+            灵活并且非常强大的前端工作流程。
+
+    vue-loader:
+
 

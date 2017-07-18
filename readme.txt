@@ -4,18 +4,6 @@
     1.IDEA安装Vue插件
     2.
 
-脚手架说明：
-    1.安装webpack：
-        npm install -g webpack
-    2.安装vue-cli:
-        npm install -g vue-cli
-    3.安装vuejs-templates(https://github.com/vuejs-templates):
-        vue init webpack vue-webpack
-        cd vue-webpack
-        npm install
-    4.启动项目：
-        npm run dev
-
 2017-06-06
     开始学习
 
@@ -44,5 +32,5 @@
         过渡效果
 
 2017-06-08
-    单文件组件
-
+    运行.vue单文件组件参见：
+        https://github.com/alisure-web/vue-single-file

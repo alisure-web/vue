@@ -2,7 +2,12 @@
 
 注意事项：
     1.IDEA安装Vue插件
-    2.
+    2.安装 vue-cli:(https://vue-loader.vuejs.org/zh-cn)
+        npm install -g vue-cli
+        vue init webpack-simple hello-vue
+        cd hello-vue
+        npm install
+        npm run dev
 
 2017-06-06
     开始学习
@@ -32,5 +37,5 @@
         过渡效果
 
 2017-06-08
-    运行.vue单文件组件参见：
-        https://github.com/alisure-web/vue-single-file
+    单文件组件
+
